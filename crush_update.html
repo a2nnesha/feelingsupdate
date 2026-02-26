@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Update</title>
+
+<style>
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, #ffeef5, #f4f0ff);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: #4b3f57;
+  }
+
+  .card {
+    width: min(650px, 92vw);
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+  }
+
+  .title {
+    font-size: 18px;
+    margin-bottom: 18px;
+    font-weight: 500;
+  }
+
+  .log {
+    margin-bottom: 16px;
+    min-height: 24px;
+    font-size: 14px;
+    opacity: 0.8;
+  }
+
+  .bar-wrap {
+    height: 14px;
+    background: #f2e8ff;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #ffb6d9, #c6b3ff);
+    transition: width .08s linear;
+  }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 12px;
+    opacity: 0.7;
+  }
+
+  button {
+    margin-top: 18px;
+    padding: 10px 16px;
+    border-radius: 14px;
+    border: none;
+    background: #ffd6eb;
+    color: #5a3b52;
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+  button:hover { background: #ffc4e3; }
+
+  button:disabled {
+    cursor: not-allowed;
+    opacity: 0.75;
+  }
+
+  .final {
+    margin-top: 20px;
+    padding: 16px;
+    border-radius: 14px;
+    background: #f9f4ff;
+    display: none;
+    white-space: pre-line;
+    font-size: 15px;
+  }
+</style>
+</head>
+
+<body>
+  <div class="card">
+    <div class="title">Installing Update: Feelings 2.0</div>
+
+    <div id="log" class="log">Ready.</div>
+
+    <div class="bar-wrap">
+      <div id="bar" class="bar"></div>
+    </div>
+
+    <div class="row">
+      <span id="status">Status: idle</span>
+      <span id="pct">0%</span>
+    </div>
+
+    <button id="start">Run update</button>
+
+    <div id="final" class="final"></div>
+  </div>
+
+  <!-- YOUR MADAGASCAR AUDIO FILE -->
+  <audio id="circusSound" preload="auto">
+    <source src="madagascar.mp3" type="audio/mpeg">
+  </audio>
+
+<script>
+const startBtn = document.getElementById("start");
+const bar = document.getElementById("bar");
+const pct = document.getElementById("pct");
+const status = document.getElementById("status");
+const log = document.getElementById("log");
+const final = document.getElementById("final");
+const circusSound = document.getElementById("circusSound");
+
+const messages = [
+  { at: 10, text: "Checking emotional stability..." },
+  { at: 25, text: "Attempting to act normal around you..." },
+  { at: 45, text: "Warning: feelingsDetected" },
+  { at: 65, text: "Trying to ignore it..." },
+  { at: 85, text: "That did not work." },
+  { at: 100, text: "Update complete." }
+];
+
+let running = false;
+
+startBtn.addEventListener("click", () => {
+  if (running) return;
+  running = true;
+
+  startBtn.disabled = true;
+  startBtn.textContent = "Updating...";
+  final.style.display = "none";
+  final.textContent = "";
+  log.textContent = "Starting...";
+  status.textContent = "Status: running";
+
+  let p = 0;
+  let msgIndex = 0;
+
+  const tick = () => {
+    // Slow + readable
+    p += 0.35;
+    if (p > 100) p = 100;
+
+    bar.style.width = p.toFixed(0) + "%";
+    pct.textContent = p.toFixed(0) + "%";
+
+    while (msgIndex < messages.length && p >= messages[msgIndex].at) {
+      log.textContent = messages[msgIndex].text;
+      msgIndex++;
+    }
+
+    if (p < 100) {
+      setTimeout(() => requestAnimationFrame(tick), 40);
+    } else {
+      status.textContent = "Status: complete";
+
+      // PLAY MADAGASCAR CIRCUS SOUND
+      circusSound.currentTime = 0;
+      circusSound.play().catch(() => {});
+
+      final.style.display = "block";
+      final.textContent =
+        "RESULT:\n\nI regret to inform you that I might like you.\n\n" +
+        "I'm still reviewing the data but it's not looking good for me.\n\n" +
+        "";
+    }
+  };
+
+  requestAnimationFrame(tick);
+});
+</script>
+
+</body>
+</html>
